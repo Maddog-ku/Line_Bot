@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <title>LINE Bot 排程管理</title>
+  <style>
+    body { font-family: -apple-system, "Noto Sans TC", sans-serif; margin: 2rem; max-width: 960px; }
+    nav a { margin-right: 1rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ddd; padding: .5rem; text-align: left; font-size: .9rem; }
+    th { background: #f4f4f4; }
+    form.inline { display: inline; }
+    input, select, textarea { padding: .3rem; font-size: .9rem; }
+    button { padding: .3rem .7rem; cursor: pointer; }
+    .muted { color: #888; font-size: .85rem; }
+    .tag-ok { color: #0a0; }
+    .tag-fail { color: #c00; }
+    .card { border: 1px solid #ddd; padding: 1rem; margin-top: 1rem; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/schedules">排程</a>
+    <a href="/groups">群組</a>
+    <a href="/logs">發送紀錄</a>
+  </nav>
+  <hr>
+  {% block content %}{% endblock %}
+</body>
+</html>

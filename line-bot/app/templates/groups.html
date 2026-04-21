@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>群組列表</h2>
+<p class="muted">把 Bot 加入 LINE 群組並在群組發一則訊息後，群組會自動出現於此。</p>
+<table>
+  <tr><th>名稱</th><th>Group ID</th><th>加入時間</th><th>操作</th></tr>
+  {% for g in groups %}
+  <tr>
+    <td>{{ g.name or "(未命名)" }}</td>
+    <td><code>{{ g.group_id }}</code></td>
+    <td>{{ g.joined_at.strftime("%Y-%m-%d %H:%M") }}</td>
+    <td>
+      <form class="inline" method="post" action="/groups/{{ g.group_id }}/rename">
+        <input name="name" value="{{ g.name or '' }}" placeholder="自訂名稱">
+        <button type="submit">更新</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

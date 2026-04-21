@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>訊息管理 — {{ schedule.name }}</h2>
+<p class="muted">Cron: <code>{{ schedule.cron }}</code> ／ 模式: {{ schedule.pick_mode.value }}</p>
+
+<div class="card">
+  <h3>新增訊息</h3>
+  <form method="post" action="/schedules/{{ schedule.id }}/messages">
+    <textarea name="content" rows="4" cols="60" required placeholder="純文字內容"></textarea><br>
+    <button type="submit">新增</button>
+  </form>
+</div>
+
+<table>
+  <tr><th>#</th><th>內容</th><th>操作</th></tr>
+  {% for m in messages %}
+  <tr>
+    <td>{{ m.order_index }}</td>
+    <td><pre style="white-space: pre-wrap; margin: 0;">{{ m.content }}</pre></td>
+    <td>
+      <form class="inline" method="post" action="/messages/{{ m.id }}/delete" onsubmit="return confirm('刪除?')">
+        <button type="submit">刪除</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p><a href="/schedules">← 返回排程列表</a></p>
+{% endblock %}

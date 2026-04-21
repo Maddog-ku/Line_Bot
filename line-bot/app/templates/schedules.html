@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>排程列表</h2>
+
+<div class="card">
+  <h3>新增排程</h3>
+  <form method="post" action="/schedules">
+    <p>名稱 <input name="name" required></p>
+    <p>群組
+      <select name="group_id" required>
+        {% for g in groups %}
+        <option value="{{ g.group_id }}">{{ g.name or g.group_id }}</option>
+        {% endfor %}
+      </select>
+    </p>
+    <p>Cron 表達式 <input name="cron" placeholder="0 12 * * 2" required>
+      <span class="muted">例：週二 12:00 = <code>0 12 * * 2</code>，週三 18:00 = <code>0 18 * * 3</code></span>
+    </p>
+    <p>挑選模式
+      <select name="pick_mode">
+        <option value="sequential">sequential（依序）</option>
+        <option value="random">random（隨機）</option>
+      </select>
+    </p>
+    <button type="submit">建立</button>
+  </form>
+</div>
+
+<table>
+  <tr>
+    <th>ID</th><th>名稱</th><th>群組</th><th>Cron</th><th>模式</th><th>狀態</th><th>操作</th>
+  </tr>
+  {% for s in schedules %}
+  <tr>
+    <td>{{ s.id }}</td>
+    <td>{{ s.name }}</td>
+    <td>{{ group_map[s.group_id].name if s.group_id in group_map and group_map[s.group_id].name else s.group_id }}</td>
+    <td><code>{{ s.cron }}</code></td>
+    <td>{{ s.pick_mode.value }}</td>
+    <td>{{ "啟用" if s.enabled else "停用" }}</td>
+    <td>
+      <a href="/schedules/{{ s.id }}/messages">訊息</a>
+      <form class="inline" method="post" action="/schedules/{{ s.id }}/toggle">
+        <button type="submit">{{ "停用" if s.enabled else "啟用" }}</button>
+      </form>
+      <form class="inline" method="post" action="/schedules/{{ s.id }}/test">
+        <button type="submit">立即測試</button>
+      </form>
+      <form class="inline" method="post" action="/schedules/{{ s.id }}/delete" onsubmit="return confirm('確定刪除?')">
+        <button type="submit">刪除</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
