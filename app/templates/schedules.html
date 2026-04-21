@@ -26,10 +26,11 @@
   </form>
 </div>
 
-<table>
-  <tr>
-    <th>ID</th><th>名稱</th><th>群組</th><th>Cron</th><th>模式</th><th>狀態</th><th>操作</th>
-  </tr>
+<div class="table-container">
+  <table>
+    <tr>
+      <th>ID</th><th>名稱</th><th>群組</th><th>Cron</th><th>模式</th><th>狀態</th><th>操作</th>
+    </tr>
   {% for s in schedules %}
   <tr>
     <td>{{ s.id }}</td>
@@ -52,5 +53,6 @@
     </td>
   </tr>
   {% endfor %}
-</table>
+  </table>
+</div>
 {% endblock %}

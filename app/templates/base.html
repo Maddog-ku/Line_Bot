@@ -2,20 +2,300 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LINE Bot 排程管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: -apple-system, "Noto Sans TC", sans-serif; margin: 2rem; max-width: 960px; }
-    nav a { margin-right: 1rem; }
-    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
-    th, td { border: 1px solid #ddd; padding: .5rem; text-align: left; font-size: .9rem; }
-    th { background: #f4f4f4; }
-    form.inline { display: inline; }
-    input, select, textarea { padding: .3rem; font-size: .9rem; }
-    button { padding: .3rem .7rem; cursor: pointer; }
-    .muted { color: #888; font-size: .85rem; }
-    .tag-ok { color: #0a0; }
-    .tag-fail { color: #c00; }
-    .card { border: 1px solid #ddd; padding: 1rem; margin-top: 1rem; border-radius: 6px; }
+    :root {
+      --primary: #06C755;
+      --primary-hover: #05b34c;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body { 
+      font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif; 
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 3rem;
+    }
+
+    /* Navigation */
+    nav {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      justify-content: center;
+    }
+    
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    nav a:hover, nav a.active {
+      background: #f0fdf4;
+      color: var(--primary);
+    }
+
+    /* Layout */
+    main {
+      max-width: 1100px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+
+    /* Tables */
+    .table-container {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      margin-top: 1rem;
+    }
+
+    table { 
+      border-collapse: collapse; 
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    th, td { 
+      padding: 1.1rem 1.2rem; 
+      text-align: left; 
+      border-bottom: 1px solid var(--border);
+    }
+
+    th { 
+      background: #f8fafc; 
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr {
+      transition: background-color 0.2s;
+    }
+
+    tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    /* Forms & Inputs */
+    form.inline { display: inline-flex; align-items: center; gap: 0.5rem; }
+    
+    input, select, textarea { 
+      padding: 0.7rem 1rem; 
+      font-size: 0.95rem; 
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s;
+      font-family: inherit;
+      background: #f8fafc;
+      color: var(--text-main);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(6, 199, 85, 0.15);
+      background: #fff;
+    }
+
+    /* Buttons */
+    button { 
+      padding: 0.6rem 1.2rem; 
+      cursor: pointer; 
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(6, 199, 85, 0.25);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Danger Button */
+    form[action*="delete"] button, button.danger {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+    
+    form[action*="delete"] button:hover, button.danger:hover {
+      background: var(--danger);
+      color: white;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Secondary Buttons */
+    form[action*="toggle"] button, form[action*="test"] button, a.btn {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+    form[action*="toggle"] button:hover, form[action*="test"] button:hover, a.btn:hover {
+      background: #e2e8f0;
+      box-shadow: none;
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    a:hover {
+      color: var(--primary-hover);
+    }
+
+    /* Action Links as Buttons in Table */
+    td a {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      background: #f1f5f9;
+      color: var(--text-main);
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    td a:hover {
+      background: #e2e8f0;
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    /* Utilities */
+    .muted { color: var(--text-muted); font-size: 0.85rem; }
+    .tag-ok { 
+      color: #059669; 
+      background: #d1fae5; 
+      padding: 0.25rem 0.75rem; 
+      border-radius: 9999px; 
+      font-size: 0.8rem; 
+      font-weight: 600;
+      display: inline-block;
+    }
+    .tag-fail { 
+      color: #dc2626; 
+      background: #fee2e2; 
+      padding: 0.25rem 0.75rem; 
+      border-radius: 9999px; 
+      font-size: 0.8rem; 
+      font-weight: 600;
+      display: inline-block;
+    }
+    .card { 
+      background: var(--card-bg);
+      border: 1px solid var(--border); 
+      padding: 2rem; 
+      margin-top: 1rem; 
+      margin-bottom: 2rem;
+      border-radius: var(--radius); 
+      box-shadow: var(--shadow);
+    }
+
+    code {
+      background: #f1f5f9;
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+      color: #db2777;
+    }
+
+    /* Form spacing inside cards */
+    .card form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .card p {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-weight: 500;
+    }
+    .card p .muted {
+      font-weight: 400;
+    }
+    .card button[type="submit"] {
+      align-self: flex-start;
+      margin-top: 0.5rem;
+      padding: 0.7rem 1.5rem;
+    }
   </style>
 </head>
 <body>
@@ -23,8 +303,18 @@
     <a href="/schedules">排程</a>
     <a href="/groups">群組</a>
     <a href="/logs">發送紀錄</a>
+    <a href="/settings">設定</a>
   </nav>
-  <hr>
-  {% block content %}{% endblock %}
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <script>
+    // Simple script to highlight active nav item
+    document.querySelectorAll('nav a').forEach(link => {
+      if (window.location.pathname.startsWith(link.getAttribute('href'))) {
+        link.classList.add('active');
+      }
+    });
+  </script>
 </body>
 </html>

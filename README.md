@@ -18,18 +18,13 @@ FastAPI · APScheduler · SQLModel · Jinja2 · line-bot-sdk v3
 - Channel access token (long-lived)
 - Channel secret
 
-### 2. 設定環境變數
-```bash
-cp .env.example .env
-# 編輯 .env 填入 token/secret
-```
-
-### 3. 啟動
+### 2. 啟動
 ```bash
 docker compose up -d --build
 ```
 
-訪問 <http://localhost:8000/schedules>
+### 3. 於 Web UI 填入 API Key
+訪問 <http://localhost:8000/settings>，貼上 Channel access token 與 Channel secret 後儲存即可（不需手動編輯 `.env`）。設定會存在 SQLite，重啟容器後仍保留。之後訪問 <http://localhost:8000/schedules> 開始建立排程。
 
 ### 4. 設定 webhook
 - 公開一個 HTTPS URL（ngrok 或反向代理）指向 `http://<host>:8000/webhook`
@@ -50,8 +45,8 @@ docker compose up -d --build
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # 編輯
 uvicorn app.main:app --reload
+# 首次啟動後到 http://localhost:8000/settings 填入 token/secret
 ```
 
 ## 注意

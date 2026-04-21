@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>發送紀錄（最近 100 筆）</h2>
-<table>
-  <tr><th>時間</th><th>Schedule</th><th>Message</th><th>狀態</th><th>錯誤</th></tr>
+<div class="table-container">
+  <table>
+    <tr><th>時間</th><th>Schedule</th><th>Message</th><th>狀態</th><th>錯誤</th></tr>
   {% for l in logs %}
   <tr>
     <td>{{ l.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
@@ -12,5 +13,6 @@
     <td>{{ l.error or "" }}</td>
   </tr>
   {% endfor %}
-</table>
+  </table>
+</div>
 {% endblock %}

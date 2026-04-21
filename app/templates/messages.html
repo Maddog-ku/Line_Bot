@@ -11,8 +11,9 @@
   </form>
 </div>
 
-<table>
-  <tr><th>#</th><th>內容</th><th>操作</th></tr>
+<div class="table-container">
+  <table>
+    <tr><th>#</th><th>內容</th><th>操作</th></tr>
   {% for m in messages %}
   <tr>
     <td>{{ m.order_index }}</td>
@@ -24,7 +25,8 @@
     </td>
   </tr>
   {% endfor %}
-</table>
+  </table>
+</div>
 
-<p><a href="/schedules">← 返回排程列表</a></p>
+<p style="margin-top: 1.5rem;"><a href="/schedules" class="btn">← 返回排程列表</a></p>
 {% endblock %}

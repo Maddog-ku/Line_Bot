@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>LINE Channel 設定</h2>
+
+{% if saved %}
+  <div class="card" style="border-color: #06C755; background: #f0fdf4;">
+    <strong style="color: #059669;">已儲存設定</strong>
+    <p class="muted" style="margin-top: 0.5rem;">可前往 <a href="/schedules">排程</a> 頁面開始使用。</p>
+  </div>
+{% endif %}
+
+{% if not has_token or not has_secret %}
+  <div class="card" style="border-color: #f59e0b; background: #fffbeb;">
+    <strong style="color: #b45309;">尚未完成設定</strong>
+    <p class="muted" style="margin-top: 0.5rem;">
+      請到 <a href="https://developers.line.biz/" target="_blank" rel="noopener">LINE Developers Console</a>
+      建立 Messaging API Channel，取得 Channel access token 與 Channel secret 後填入下方表單。
+    </p>
+  </div>
+{% endif %}
+
+<div class="card">
+  <form method="post" action="/settings">
+    <p>
+      <label>Channel access token (long-lived)</label>
+      {% if has_token %}
+        <span class="muted">目前：<code>{{ token_masked }}</code>（留空不會變更）</span>
+      {% endif %}
+      <input type="password" name="line_channel_access_token" autocomplete="off"
+             placeholder="{% if has_token %}留空以保留現有設定{% else %}貼上 Channel access token{% endif %}">
+    </p>
+    <p>
+      <label>Channel secret</label>
+      {% if has_secret %}
+        <span class="muted">目前：<code>{{ secret_masked }}</code>（留空不會變更）</span>
+      {% endif %}
+      <input type="password" name="line_channel_secret" autocomplete="off"
+             placeholder="{% if has_secret %}留空以保留現有設定{% else %}貼上 Channel secret{% endif %}">
+    </p>
+    <button type="submit">儲存</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>使用步驟</h3>
+  <ol style="padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+    <li>到 <a href="https://developers.line.biz/" target="_blank" rel="noopener">LINE Developers Console</a> 建立 Messaging API Channel。</li>
+    <li>從 Channel 頁面複製 <strong>Channel access token (long-lived)</strong> 與 <strong>Channel secret</strong>，貼到上方表單並儲存。</li>
+    <li>將此服務的 <code>/webhook</code> 公開網址填入 LINE Console 的 Webhook URL，並啟用 Use webhook。</li>
+    <li>把 Bot 加入群組並發一則訊息，群組會出現在 <a href="/groups">群組</a> 頁面。</li>
+    <li>到 <a href="/schedules">排程</a> 建立推送排程。</li>
+  </ol>
+</div>
+{% endblock %}

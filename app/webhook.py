@@ -10,13 +10,12 @@ from linebot.v3.webhooks import (
 )
 from sqlmodel import select
 
-from app.config import settings
 from app.db import get_session
 from app.models import Group
+from app.settings_store import get_line_secret
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
-parser = WebhookParser(settings.line_channel_secret)
 
 
 def _upsert_group(group_id: str) -> None:
@@ -30,6 +29,11 @@ def _upsert_group(group_id: str) -> None:
 
 @router.post("/webhook")
 async def webhook(request: Request, x_line_signature: str = Header(...)):
+    secret = get_line_secret()
+    if not secret:
+        raise HTTPException(status_code=503, detail="LINE Channel secret 尚未設定")
+    parser = WebhookParser(secret)
+
     body = (await request.body()).decode("utf-8")
     try:
         events = parser.parse(body, x_line_signature)

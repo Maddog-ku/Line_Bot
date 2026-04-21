@@ -39,6 +39,11 @@ class Message(SQLModel, table=True):
     order_index: int = Field(default=0)
 
 
+class Setting(SQLModel, table=True):
+    key: str = Field(primary_key=True)
+    value: str = ""
+
+
 class SendLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     schedule_id: int

@@ -6,11 +6,18 @@ from linebot.v3.messaging import (
     TextMessage,
 )
 
-from app.config import settings
+from app.settings_store import get_line_token
+
+
+class LineNotConfigured(RuntimeError):
+    pass
 
 
 def _api() -> MessagingApi:
-    config = Configuration(access_token=settings.line_channel_access_token)
+    token = get_line_token()
+    if not token:
+        raise LineNotConfigured("LINE Channel access token 尚未設定，請到 /settings 填寫")
+    config = Configuration(access_token=token)
     return MessagingApi(ApiClient(config))
 
 
